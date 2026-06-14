@@ -1,9 +1,9 @@
-/* Carboot Scorekeeper — single-file vanilla JS app */
+/* Kaboo Scorekeeper — single-file vanilla JS app */
 (function () {
   'use strict';
 
   const APP_VERSION = '1.0.0';
-  const STORAGE_KEY = 'carboot.v1';
+  const STORAGE_KEY = 'kaboo.v1';
 
   /** ---- State ---- **/
   /** @typedef {{ id:string, name:string }} Player */
@@ -12,13 +12,22 @@
 
   const defaultState = () => ({
     version: 1,
-    settings: { winCondition: 'low', target: null, allowNegative: false },
+    settings: { winCondition: 'low', target: 100, allowNegative: true },
     activeGame: /** @type {Game|null} */ (null),
     history: /** @type {Game[]} */ ([]),
     lastLineup: /** @type {string[]} */ ([]),
   });
 
   let state = load();
+  // One-time migration from old carboot.v1 key, if present
+  try {
+    if (!localStorage.getItem(STORAGE_KEY) && localStorage.getItem('carboot.v1')) {
+      const old = localStorage.getItem('carboot.v1');
+      localStorage.setItem(STORAGE_KEY, old);
+      localStorage.removeItem('carboot.v1');
+      state = load();
+    }
+  } catch (_) {}
 
   function load() {
     try {
@@ -551,7 +560,7 @@
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     const stamp = new Date().toISOString().slice(0, 10);
-    a.href = url; a.download = `carboot-${stamp}.json`;
+    a.href = url; a.download = `kaboo-${stamp}.json`;
     document.body.appendChild(a); a.click(); a.remove();
     URL.revokeObjectURL(url);
     toast('Exported');
