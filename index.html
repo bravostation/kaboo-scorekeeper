@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#0f172a" />
+<title>Carboot Scorekeeper</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🎴%3C/text%3E%3C/svg%3E" />
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🎴%3C/text%3E%3C/svg%3E" />
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <h1>🎴 Carboot</h1>
+    <nav class="tabs" role="tablist">
+      <button class="tab active" data-tab="game" role="tab">Game</button>
+      <button class="tab" data-tab="history" role="tab">History</button>
+      <button class="tab" data-tab="stats" role="tab">Stats</button>
+      <button class="tab" data-tab="settings" role="tab">Settings</button>
+    </nav>
+  </header>
+
+  <main>
+    <!-- ========== GAME TAB ========== -->
+    <section id="tab-game" class="tab-panel active">
+
+      <!-- Setup view: shown when no active game -->
+      <div id="setup-view" class="card">
+        <h2>New game</h2>
+        <p class="muted">Add players in the order you want them to appear.</p>
+        <form id="add-player-form" class="row">
+          <input id="player-name" type="text" placeholder="Player name" autocomplete="off" maxlength="24" required />
+          <button type="submit" class="btn primary">Add</button>
+        </form>
+        <ul id="setup-players" class="player-list"></ul>
+        <div class="row gap">
+          <button id="start-game-btn" class="btn primary big" disabled>Start game</button>
+          <button id="quick-add-recent" class="btn ghost" hidden>Reuse last lineup</button>
+        </div>
+      </div>
+
+      <!-- Active game view -->
+      <div id="active-view" hidden>
+        <div class="card scoreboard">
+          <div class="row between">
+            <div>
+              <h2 id="active-title">Game in progress</h2>
+              <p class="muted" id="active-meta"></p>
+            </div>
+            <div class="row gap small">
+              <button id="undo-round-btn" class="btn ghost" title="Undo last round">↶ Undo</button>
+              <button id="end-game-btn" class="btn danger">End game</button>
+            </div>
+          </div>
+
+          <div class="table-wrap">
+            <table id="score-table">
+              <thead><tr id="score-head"></tr></thead>
+              <tbody id="score-body"></tbody>
+              <tfoot id="score-foot"></tfoot>
+            </table>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Add round <span id="round-num" class="badge"></span></h3>
+          <form id="round-form" class="round-grid"></form>
+          <div class="row gap">
+            <button id="submit-round-btn" class="btn primary">Submit round</button>
+            <button id="clear-round-btn" type="button" class="btn ghost">Clear</button>
+          </div>
+          <p id="round-hint" class="muted small"></p>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ========== HISTORY TAB ========== -->
+    <section id="tab-history" class="tab-panel">
+      <div class="card">
+        <div class="row between">
+          <h2>Past games</h2>
+          <button id="export-btn" class="btn ghost small">Export JSON</button>
+        </div>
+        <div id="history-list"></div>
+      </div>
+    </section>
+
+    <!-- ========== STATS TAB ========== -->
+    <section id="tab-stats" class="tab-panel">
+      <div class="card">
+        <h2>Stats</h2>
+        <p class="muted small" id="stats-meta"></p>
+        <div id="stats-content"></div>
+      </div>
+    </section>
+
+    <!-- ========== SETTINGS TAB ========== -->
+    <section id="tab-settings" class="tab-panel">
+      <div class="card">
+        <h2>Settings</h2>
+
+        <label class="setting">
+          <span>Win condition</span>
+          <select id="setting-win">
+            <option value="low">Lowest total wins</option>
+            <option value="high">Highest total wins</option>
+          </select>
+        </label>
+
+        <label class="setting">
+          <span>End at score (optional)</span>
+          <input id="setting-target" type="number" placeholder="e.g. 100" />
+        </label>
+
+        <label class="setting">
+          <span>Allow negative scores</span>
+          <input id="setting-negative" type="checkbox" />
+        </label>
+
+        <hr />
+        <h3>Data</h3>
+        <div class="row gap">
+          <button id="import-btn" class="btn ghost">Import JSON</button>
+          <input id="import-file" type="file" accept="application/json" hidden />
+          <button id="export-all-btn" class="btn ghost">Export everything</button>
+          <button id="wipe-btn" class="btn danger">Wipe all data</button>
+        </div>
+        <p class="muted small">Everything is stored locally in your browser. Nothing leaves your device.</p>
+
+        <hr />
+        <h3>About</h3>
+        <p class="muted small">Carboot Scorekeeper · v<span id="app-version"></span> · built for Chris 🍺</p>
+      </div>
+    </section>
+  </main>
+
+  <div id="toast" class="toast" hidden></div>
+</div>
+
+<dialog id="confirm-dialog">
+  <form method="dialog">
+    <h3 id="confirm-title">Are you sure?</h3>
+    <p id="confirm-body" class="muted"></p>
+    <div class="row gap end">
+      <button value="cancel" class="btn ghost">Cancel</button>
+      <button id="confirm-ok" value="ok" class="btn danger">Confirm</button>
+    </div>
+  </form>
+</dialog>
+
+<script src="app.js"></script>
+</body>
+</html>
