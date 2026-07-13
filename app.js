@@ -2,7 +2,7 @@
 (function () {
   'use strict';
 
-  const APP_VERSION = '1.1.1';
+  const APP_VERSION = '1.2.0';
   const STORAGE_KEY = 'kaboo.v1';
 
   /** ---- State ---- **/
@@ -534,16 +534,23 @@
 
   function parseAlternatingScores(text) {
     const lines = text.split(/\r?\n/).map(line => line.trim()).filter(Boolean);
-    if (lines.length < 4) {
+    if (lines.length < 2) {
       throw new Error('Enter two player names and at least one score for each player.');
     }
 
-    const names = lines.slice(0, 2);
+    const cells = lines.map(line => line.split(/\s+/));
+    const isTwoColumn = cells[0].length === 2
+      && cells[0].every(value => !/^[+-]?\d+$/.test(value))
+      && cells.slice(1).every(row => row.length === 2 && row.every(value => /^[+-]?\d+$/.test(value)));
+    const names = isTwoColumn ? cells[0] : lines.slice(0, 2);
     if (names[0].toLowerCase() === names[1].toLowerCase()) {
       throw new Error('The two player names must be different.');
     }
 
-    const scoreLines = lines.slice(2);
+    const scoreLines = isTwoColumn ? cells.slice(1).flat() : lines.slice(2);
+    if (scoreLines.length < 2) {
+      throw new Error('Enter at least one score for each player.');
+    }
     if (scoreLines.length % 2 !== 0) {
       throw new Error(`Missing ${names[1]}’s score for round ${Math.ceil(scoreLines.length / 2)}.`);
     }
