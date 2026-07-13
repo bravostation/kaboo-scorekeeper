@@ -11,7 +11,7 @@ Features:
 - Add players, start a new set of games, log scores per round
 - Stores everything in your browser's `localStorage` — nothing leaves your device
 - Stats: leaderboard, win rate, avg points/game and /round, best & worst rounds, top rivalry
-- Undo last round, end game, rematch from history, import/export JSON
+- Undo last round; resume or rematch games from history; import/export JSON
 - Import completed games for any number of players from newline or columnar score text
 - Mobile-friendly, works offline once loaded
 

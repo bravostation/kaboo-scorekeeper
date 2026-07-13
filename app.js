@@ -2,7 +2,7 @@
 (function () {
   'use strict';
 
-  const APP_VERSION = '1.3.0';
+  const APP_VERSION = '1.4.0';
   const STORAGE_KEY = 'kaboo.v1';
 
   /** ---- State ---- **/
@@ -338,6 +338,7 @@
         roundsTable(game)
       );
       const actions = el('div', { class: 'item-actions' },
+        el('button', { class: 'btn primary small', onclick: () => resumeGame(game) }, 'Resume'),
         el('button', { class: 'btn ghost small', onclick: () => rematchFrom(game) }, 'Rematch'),
         el('button', { class: 'btn danger small', onclick: () => deleteGame(game.id) }, 'Delete')
       );
@@ -373,6 +374,23 @@
     save();
     renderHistory();
     toast('Game deleted');
+  }
+
+  async function resumeGame(game) {
+    if (state.activeGame) {
+      if (!await confirmDialog('Replace active game?', 'Discard the current game and resume this one?')) return;
+    } else if (!await confirmDialog('Resume this game?', `Continue from round ${game.rounds.length + 1}?`)) {
+      return;
+    }
+
+    state.history = state.history.filter(historyGame => historyGame.id !== game.id);
+    game.ended = null;
+    state.activeGame = game;
+    state.lastLineup = game.players.map(player => player.name);
+    save();
+    switchTab('game');
+    renderGame();
+    toast(`Resumed at round ${game.rounds.length + 1}`, 'success');
   }
 
   async function rematchFrom(game) {
