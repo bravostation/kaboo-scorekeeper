@@ -122,11 +122,13 @@
         <hr />
         <h3>Data</h3>
         <div class="row gap">
+          <button id="import-scores-btn" class="btn ghost">Import score text</button>
           <button id="import-btn" class="btn ghost">Import JSON</button>
           <input id="import-file" type="file" accept="application/json" hidden />
           <button id="export-all-btn" class="btn ghost">Export everything</button>
           <button id="wipe-btn" class="btn danger">Wipe all data</button>
         </div>
+        <p class="muted small">Score text format: two player names, then one score per line alternating between them. Imported games are added to History.</p>
         <p class="muted small">Everything is stored locally in your browser. Nothing leaves your device.</p>
 
         <hr />
@@ -146,6 +148,19 @@
     <div class="row gap end">
       <button value="cancel" class="btn ghost">Cancel</button>
       <button id="confirm-ok" value="ok" class="btn danger">Confirm</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="score-import-dialog" class="wide-dialog">
+  <form id="score-import-form">
+    <h3>Import alternating scores</h3>
+    <p class="muted small">Put the two player names first, then one integer score per line. Each pair becomes a round.</p>
+    <textarea id="score-import-text" rows="16" spellcheck="false" placeholder="Susy&#10;Chris&#10;25&#10;0&#10;0&#10;4"></textarea>
+    <p id="score-import-error" class="form-error" hidden></p>
+    <div class="row gap end">
+      <button id="score-import-cancel" type="button" class="btn ghost">Cancel</button>
+      <button type="submit" class="btn primary">Import game</button>
     </div>
   </form>
 </dialog>

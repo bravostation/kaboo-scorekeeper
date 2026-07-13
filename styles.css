@@ -105,7 +105,7 @@ input, select, button {
   font-family: inherit;
   font-size: 1rem;
 }
-input[type="text"], input[type="number"], select {
+input[type="text"], input[type="number"], select, textarea {
   background: var(--surface-2);
   color: var(--text);
   border: 1px solid var(--border);
@@ -115,8 +115,16 @@ input[type="text"], input[type="number"], select {
   outline: none;
   transition: border-color .15s ease;
 }
-input[type="text"]:focus, input[type="number"]:focus, select:focus {
+input[type="text"]:focus, input[type="number"]:focus, select:focus, textarea:focus {
   border-color: var(--primary);
+}
+textarea {
+  display: block;
+  width: 100%;
+  resize: vertical;
+  margin: .75rem 0;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  line-height: 1.4;
 }
 input[type="checkbox"] {
   width: 1.1rem; height: 1.1rem; accent-color: var(--primary);
@@ -294,6 +302,8 @@ dialog {
 }
 dialog::backdrop { background: rgba(0,0,0,.5); backdrop-filter: blur(4px); }
 dialog h3 { margin: 0 0 .5rem; }
+.wide-dialog { width: min(560px, calc(100vw - 2rem)); max-width: 560px; }
+.form-error { color: var(--danger); font-size: .85rem; margin: -.25rem 0 .75rem; }
 
 @media (max-width: 600px) {
   .topbar { gap: .5rem; }

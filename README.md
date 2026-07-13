@@ -12,6 +12,7 @@ Features:
 - Stores everything in your browser's `localStorage` — nothing leaves your device
 - Stats: leaderboard, win rate, avg points/game and /round, best & worst rounds, top rivalry
 - Undo last round, end game, rematch from history, import/export JSON
+- Import completed two-player games from newline text (two names, then alternating scores)
 - Mobile-friendly, works offline once loaded
 
 ## Run locally

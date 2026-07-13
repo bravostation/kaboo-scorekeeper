@@ -2,7 +2,7 @@
 (function () {
   'use strict';
 
-  const APP_VERSION = '1.0.0';
+  const APP_VERSION = '1.1.0';
   const STORAGE_KEY = 'kaboo.v1';
 
   /** ---- State ---- **/
@@ -531,6 +531,90 @@
 
   $('#export-btn').addEventListener('click', () => exportJson({ history: state.history }));
   $('#export-all-btn').addEventListener('click', () => exportJson(state));
+
+  function parseAlternatingScores(text) {
+    const lines = text.split(/\r?\n/).map(line => line.trim()).filter(Boolean);
+    if (lines.length < 4) {
+      throw new Error('Enter two player names and at least one score for each player.');
+    }
+
+    const names = lines.slice(0, 2);
+    if (names[0].toLowerCase() === names[1].toLowerCase()) {
+      throw new Error('The two player names must be different.');
+    }
+
+    const scoreLines = lines.slice(2);
+    if (scoreLines.length % 2 !== 0) {
+      throw new Error(`Missing ${names[1]}’s score for round ${Math.ceil(scoreLines.length / 2)}.`);
+    }
+
+    const scores = scoreLines.map((raw, index) => {
+      if (!/^[+-]?\d+$/.test(raw)) {
+        const player = names[index % 2];
+        const round = Math.floor(index / 2) + 1;
+        throw new Error(`Invalid score “${raw}” for ${player} in round ${round}.`);
+      }
+      const value = Number(raw);
+      if (!Number.isSafeInteger(value)) throw new Error(`Score “${raw}” is too large.`);
+      return value;
+    });
+
+    const players = names.map(name => ({ id: uid(), name }));
+    const rounds = [];
+    for (let index = 0; index < scores.length; index += 2) {
+      rounds.push({
+        scores: {
+          [players[0].id]: scores[index],
+          [players[1].id]: scores[index + 1],
+        },
+      });
+    }
+    return { players, rounds };
+  }
+
+  $('#import-scores-btn').addEventListener('click', () => {
+    $('#score-import-error').hidden = true;
+    $('#score-import-dialog').showModal();
+    $('#score-import-text').focus();
+  });
+
+  $('#score-import-cancel').addEventListener('click', () => {
+    $('#score-import-dialog').close();
+  });
+
+  $('#score-import-form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const error = $('#score-import-error');
+    try {
+      const imported = parseAlternatingScores($('#score-import-text').value);
+      const now = Date.now();
+      const game = {
+        id: uid(),
+        started: now,
+        ended: now,
+        players: imported.players,
+        rounds: imported.rounds,
+        winCondition: state.settings.winCondition,
+        target: state.settings.target,
+        allowNegative: state.settings.allowNegative || imported.rounds.some(round =>
+          Object.values(round.scores).some(score => score < 0)
+        ),
+      };
+      state.history.unshift(game);
+      state.lastLineup = game.players.map(player => player.name);
+      save();
+      renderStats();
+      $('#score-import-dialog').close();
+      $('#score-import-text').value = '';
+      error.hidden = true;
+      switchTab('history');
+      toast(`Imported ${game.rounds.length} rounds for ${state.lastLineup.join(' and ')}`, 'success');
+    } catch (err) {
+      error.textContent = err.message;
+      error.hidden = false;
+    }
+  });
+
   $('#import-btn').addEventListener('click', () => $('#import-file').click());
   $('#import-file').addEventListener('change', async (e) => {
     const file = e.target.files[0]; if (!file) return;
