@@ -2,7 +2,7 @@
 (function () {
   'use strict';
 
-  const APP_VERSION = '1.2.0';
+  const APP_VERSION = '1.2.1';
   const STORAGE_KEY = 'kaboo.v1';
 
   /** ---- State ---- **/
@@ -540,8 +540,7 @@
 
     const cells = lines.map(line => line.split(/\s+/));
     const isTwoColumn = cells[0].length === 2
-      && cells[0].every(value => !/^[+-]?\d+$/.test(value))
-      && cells.slice(1).every(row => row.length === 2 && row.every(value => /^[+-]?\d+$/.test(value)));
+      && cells[0].every(value => !/^[+-]?\d+$/.test(value));
     const names = isTwoColumn ? cells[0] : lines.slice(0, 2);
     if (names[0].toLowerCase() === names[1].toLowerCase()) {
       throw new Error('The two player names must be different.');
