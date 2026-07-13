@@ -2,7 +2,7 @@
 (function () {
   'use strict';
 
-  const APP_VERSION = '1.1.0';
+  const APP_VERSION = '1.1.1';
   const STORAGE_KEY = 'kaboo.v1';
 
   /** ---- State ---- **/
@@ -572,16 +572,6 @@
     return { players, rounds };
   }
 
-  $('#import-scores-btn').addEventListener('click', () => {
-    $('#score-import-error').hidden = true;
-    $('#score-import-dialog').showModal();
-    $('#score-import-text').focus();
-  });
-
-  $('#score-import-cancel').addEventListener('click', () => {
-    $('#score-import-dialog').close();
-  });
-
   $('#score-import-form').addEventListener('submit', (e) => {
     e.preventDefault();
     const error = $('#score-import-error');
@@ -604,7 +594,6 @@
       state.lastLineup = game.players.map(player => player.name);
       save();
       renderStats();
-      $('#score-import-dialog').close();
       $('#score-import-text').value = '';
       error.hidden = true;
       switchTab('history');

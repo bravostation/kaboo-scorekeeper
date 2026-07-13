@@ -302,7 +302,8 @@ dialog {
 }
 dialog::backdrop { background: rgba(0,0,0,.5); backdrop-filter: blur(4px); }
 dialog h3 { margin: 0 0 .5rem; }
-.wide-dialog { width: min(560px, calc(100vw - 2rem)); max-width: 560px; }
+.score-import-panel { margin-bottom: 1rem; }
+.score-import-panel > .small { margin: .3rem 0 0; }
 .form-error { color: var(--danger); font-size: .85rem; margin: -.25rem 0 .75rem; }
 
 @media (max-width: 600px) {
