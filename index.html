@@ -122,9 +122,9 @@
         <hr />
         <h3>Data</h3>
         <form id="score-import-form" class="score-import-panel">
-          <label for="score-import-text"><strong>Import alternating scores</strong></label>
-          <p class="muted small">Paste two columns (names on top) or two names followed by alternating scores. Each score pair becomes a round.</p>
-          <textarea id="score-import-text" rows="10" spellcheck="false" placeholder="Susy    Chris&#10;25      0&#10;0       4&#10;15      0"></textarea>
+          <label for="score-import-text"><strong>Import scores</strong></label>
+          <p class="muted small">Put all player names across the first row, then their scores below in the same order. Each group becomes a round.</p>
+          <textarea id="score-import-text" rows="10" spellcheck="false" placeholder="Susy    Chris    Alex&#10;25      0        7&#10;0       4        12&#10;15      0        3"></textarea>
           <p id="score-import-error" class="form-error" hidden></p>
           <button type="submit" class="btn primary">Import game</button>
         </form>
@@ -135,7 +135,7 @@
           <button id="export-all-btn" class="btn ghost">Export everything</button>
           <button id="wipe-btn" class="btn danger">Wipe all data</button>
         </div>
-        <p class="muted small">Imported games are added to History. Tabs, multiple spaces, and one-value-per-line lists are supported.</p>
+        <p class="muted small">Imported games are added to History. Any number of players, tabs, multiple spaces, wrapped rows, and two-player one-value-per-line lists are supported.</p>
         <p class="muted small">Everything is stored locally in your browser. Nothing leaves your device.</p>
 
         <hr />

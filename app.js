@@ -2,7 +2,7 @@
 (function () {
   'use strict';
 
-  const APP_VERSION = '1.2.1';
+  const APP_VERSION = '1.3.0';
   const STORAGE_KEY = 'kaboo.v1';
 
   /** ---- State ---- **/
@@ -539,25 +539,27 @@
     }
 
     const cells = lines.map(line => line.split(/\s+/));
-    const isTwoColumn = cells[0].length === 2
+    const isColumnLayout = cells[0].length >= 2
       && cells[0].every(value => !/^[+-]?\d+$/.test(value));
-    const names = isTwoColumn ? cells[0] : lines.slice(0, 2);
-    if (names[0].toLowerCase() === names[1].toLowerCase()) {
-      throw new Error('The two player names must be different.');
+    const names = isColumnLayout ? cells[0] : lines.slice(0, 2);
+    if (new Set(names.map(name => name.toLowerCase())).size !== names.length) {
+      throw new Error('Player names must be different.');
     }
 
-    const scoreLines = isTwoColumn ? cells.slice(1).flat() : lines.slice(2);
-    if (scoreLines.length < 2) {
-      throw new Error('Enter at least one score for each player.');
+    const scoreLines = isColumnLayout ? cells.slice(1).flat() : lines.slice(2);
+    if (scoreLines.length === 0) {
+      throw new Error('Enter at least one round of scores.');
     }
-    if (scoreLines.length % 2 !== 0) {
-      throw new Error(`Missing ${names[1]}’s score for round ${Math.ceil(scoreLines.length / 2)}.`);
+    if (scoreLines.length % names.length !== 0) {
+      const missingPlayer = names[scoreLines.length % names.length];
+      const round = Math.floor(scoreLines.length / names.length) + 1;
+      throw new Error(`Missing ${missingPlayer}’s score for round ${round}.`);
     }
 
     const scores = scoreLines.map((raw, index) => {
       if (!/^[+-]?\d+$/.test(raw)) {
-        const player = names[index % 2];
-        const round = Math.floor(index / 2) + 1;
+        const player = names[index % names.length];
+        const round = Math.floor(index / names.length) + 1;
         throw new Error(`Invalid score “${raw}” for ${player} in round ${round}.`);
       }
       const value = Number(raw);
@@ -567,13 +569,12 @@
 
     const players = names.map(name => ({ id: uid(), name }));
     const rounds = [];
-    for (let index = 0; index < scores.length; index += 2) {
-      rounds.push({
-        scores: {
-          [players[0].id]: scores[index],
-          [players[1].id]: scores[index + 1],
-        },
+    for (let index = 0; index < scores.length; index += players.length) {
+      const roundScores = {};
+      players.forEach((player, playerIndex) => {
+        roundScores[player.id] = scores[index + playerIndex];
       });
+      rounds.push({ scores: roundScores });
     }
     return { players, rounds };
   }
